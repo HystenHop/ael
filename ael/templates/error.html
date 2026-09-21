@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+    <section class="panel empty">
+        <span class="eyebrow red">NÃO FOI POSSÍVEL CONTINUAR</span>
+        <h1>Vamos revisar?</h1>
+        <p>{{ message }}</p>
+        <a class="button primary" href="{{ url_for('auth.login') }}">Voltar ao acesso</a>
+    </section>
+{% endblock %}

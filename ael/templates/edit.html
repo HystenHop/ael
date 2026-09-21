@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if record_id else 'Cadastrar' }} · {{ title }} · AEL{% endblock %}
+{% block content %}
+    <a class="back-link" href="{{ url_for('catalog.listing', kind=kind) }}">← Voltar para {{ title|lower }}</a>
+    <div class="heading">
+        <div>
+            <span class="eyebrow">{{ title|upper }}</span>
+            <h1>{{ 'Editar' if record_id else 'Novo' }} {{ 'material' if kind == 'materials' else 'local' }}</h1>
+            <p>Informações consistentes facilitam toda a operação.</p>
+        </div>
+    </div>
+    <div class="form-layout">
+        <section class="panel form-panel">
+            <h2>Dados do cadastro</h2>
+            <p class="muted">Todos os campos abaixo são obrigatórios.</p>{% if error %}<div class="alert error" role="alert">{{ error }}</div>{% endif %}<form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="version" value="{{ record.get('version', '') }}">
+                <label for="code">{{ 'SKU / Código' if kind == 'materials' else 'Código do local' }}</label>
+                <input id="code"
+                       name="code"
+                       value="{{ record.get('code', '') }}"
+                       minlength="2"
+                       maxlength="30"
+                       required
+                       {{ 'readonly' if record_id }}
+                       aria-describedby="code-help">
+                <small id="code-help" class="field-help">{{ 'O código é permanente nesta versão.' if record_id else 'Ex.: EPI-001 ou BASE-A01. Use um código único.' }}</small>
+                <label for="name">Nome</label>
+                <input id="name"
+                       name="name"
+                       value="{{ record.get('name', '') }}"
+                       minlength="2"
+                       maxlength="100"
+                       required>
+                {% if kind == "materials" %}
+                    <div class="form-columns">
+                        <div>
+                            <label for="category">Categoria</label>
+                            <select id="category" name="category" required>
+                                <option value="">Selecione</option>{% for category in categories %}<option value="{{ category }}"
+        {{ 'selected' if record.get("category") == category }}>{{ category }}</option>{% endfor %}</select>
+                        </div>
+                        <div>
+                            <label for="unit">Unidade de medida</label>
+                            <select id="unit" name="unit" required>
+                                <option value="">Selecione</option>{% for unit in units %}<option value="{{ unit }}" {{ 'selected' if record.get("unit") == unit }}>{{ {'UN':'UN — Unidade','PAR':'PAR — Par','CX':'CX — Caixa','KG':'KG — Quilograma','L':'L — Litro','M':'M — Metro'}[unit] }}</option>{% endfor %}</select>
+                        </div>
+                    </div>{% else %}<label for="address">Endereço de armazenagem</label>
+                    <input id="address"
+                           name="address"
+                           value="{{ record.get('address', '') }}"
+                           minlength="2"
+                           maxlength="160"
+                           placeholder="Base / corredor / estante / posição"
+                           required>
+                {% endif %}
+                <div class="form-footer">
+                    <a class="button secondary"
+                       href="{{ url_for('catalog.listing', kind=kind) }}">Cancelar</a>
+                    <button type="submit" class="button primary">Salvar cadastro</button>
+                </div>
+            </form>
+        </section>
+        <aside class="tip">
+            <span class="eyebrow red">UM CADASTRO ÚTIL</span>
+            <h2>{{ 'Identifique sem ambiguidade.' if kind == 'materials' else 'Facilite a localização.' }}</h2>
+            <p>{{ 'SKU é o código interno do material. Dois itens diferentes devem ter códigos diferentes.' if kind == 'materials' else 'Use uma descrição que outra pessoa consiga seguir para encontrar o endereço físico.' }}</p>
+            <hr>
+            <p>{{ 'A unidade descreve como o item será contado. Nenhuma quantidade é registrada nesta etapa.' if kind == 'materials' else 'Cadastrar um local ainda não vincula materiais a ele. Essa relação virá com as movimentações.' }}</p>
+        </aside>
+    </div>
+{% endblock %}

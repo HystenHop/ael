@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Entrar · AEL{% endblock %}
+{% block content %}
+    <div class="login-layout">
+        <section class="login-intro">
+            <div class="brand light">
+                <span class="brand-mark">a</span>
+                <span>AEL<small>Almoxarifado, Estoque e Logística</small>
+                </span>
+            </div>
+            <div>
+                <span class="eyebrow">ORGANIZAÇÃO QUE COMEÇA NA BASE</span>
+                <h1>
+                    Cada material.
+                    <br>
+                    Um lugar para começar.
+                </h1>
+                <p>Organize o catálogo e os locais do seu almoxarifado em um só espaço.</p>
+                <div class="abstract-shelves" aria-hidden="true">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+            <small>Maré Apoio · Empresa fictícia · Versão 0.1</small>
+        </section>
+        <section class="login-form">
+            <span class="eyebrow red">BEM-VINDO AO AEL</span>
+            <h2>Acesse sua operação</h2>
+            <p class="muted">Entre com o administrador criado no seu computador.</p>{% if error %}<div class="alert error" role="alert">{{ error }}</div>{% endif %}<form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="username">Usuário</label>
+                <input id="username"
+                       name="username"
+                       autocomplete="username"
+                       maxlength="40"
+                       required
+                       autofocus>
+                <label for="password">Senha</label>
+                <input id="password"
+                       name="password"
+                       type="password"
+                       autocomplete="current-password"
+                       maxlength="128"
+                       required>
+                <button class="button primary wide" type="submit">
+                    Entrar no AEL <span aria-hidden="true">→</span>
+                </button>
+            </form>
+            <p class="login-help">Primeiro acesso? Crie o administrador pelo terminal antes de entrar. Não há senha padrão.</p>
+        </section>
+    </div>
+{% endblock %}

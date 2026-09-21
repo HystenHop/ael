@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} · AEL{% endblock %}
+{% block content %}
+    <div class="heading">
+        <div>
+            <span class="eyebrow">{{ 'CATÁLOGO DA OPERAÇÃO' if kind == 'materials' else 'ENDEREÇOS DO ALMOXARIFADO' }}</span>
+            <h1>{{ title }}</h1>
+            <p>{{ 'Uma identificação clara para cada item.' if kind == 'materials' else 'Identifique onde os materiais poderão ser armazenados.' }}</p>
+        </div>
+        <a class="button primary"
+           href="{{ url_for('catalog.edit', kind=kind) }}">+ {{ 'Novo material' if kind == 'materials' else 'Novo local' }}</a>
+    </div>
+    <section class="panel listing-panel">
+        <form class="filters" method="get">
+            <div class="search-field">
+                <label for="q">Buscar por nome ou código</label>
+                <input type="search"
+                       id="q"
+                       name="q"
+                       value="{{ query }}"
+                       placeholder="{{ 'Ex.: luva ou EPI-001' if kind == 'materials' else 'Ex.: prateleira ou BASE-A01' }}"
+                       maxlength="100">
+            </div>
+            <div>
+                <label for="status">Situação</label>
+                <select name="status" id="status">{% for value, label in [('active','Ativos'),('inactive','Inativos'),('all','Todos')] %}<option value="{{ value }}" {{ 'selected' if status == value }}>{{ label }}</option>{% endfor %}</select>
+            </div>
+            <button class="button secondary" type="submit">Filtrar</button>
+            <a class="clear-link" href="{{ url_for('catalog.listing', kind=kind) }}">Limpar</a>
+        </form>
+        <div class="table-top">
+            <strong>{{ rows|length }} {{ 'material(is)' if kind == 'materials' else 'local(is)' }}</strong>
+            <span class="muted">{{ 'Unidades de cadastro, sem saldo nesta etapa' if kind == 'materials' else 'Endereços físicos cadastrados' }}</span>
+        </div>
+        {% if rows %}
+            <div class="table-scroll"
+                 tabindex="0"
+                 role="region"
+                 aria-label="Tabela de {{ title|lower }}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">{{ 'Material / SKU' if kind == 'materials' else 'Local / Código' }}</th>{% if kind == "materials" %}<th scope="col">Categoria</th>
+                            <th scope="col">Unidade</th>{% else %}<th scope="col">Endereço</th>{% endif %}<th scope="col">Situação</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td>
+                                <div class="item-cell">
+                                    <span class="item-icon"
+                                          aria-hidden="true">{{ '▤' if kind == 'materials' else '⊙' }}</span>
+                                    <div>
+                                        <strong>{{ row.name }}</strong>
+                                        <small class="code">{{ row.code }}</small>
+                                    </div>
+                                </div>
+                            </td>{% if kind == "materials" %}<td>{{ row.category }}</td>
+                            <td>
+                                <span class="unit">{{ row.unit }}</span>
+                            </td>{% else %}<td>{{ row.address }}</td>{% endif %}<td>
+                            <span class="badge {{ 'active' if row.active else 'inactive' }}">{{ 'Ativo' if row.active else 'Inativo' }}</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <a href="{{ url_for('catalog.edit', kind=kind, record_id=row.id) }}"
+                                   aria-label="Editar {{ row.name }}">Editar</a>
+                                <form action="{{ url_for('catalog.change_status', kind=kind, record_id=row.id) }}"
+                                      method="post"
+                                      data-confirm="{{ 'Desativar' if row.active else 'Reativar' }} este cadastro? O histórico será preservado.">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="version" value="{{ row.version }}">
+                                    <input type="hidden" name="active" value="{{ 0 if row.active else 1 }}">
+                                    <button type="submit"
+                                            class="text-button"
+                                            aria-label="{{ 'Desativar' if row.active else 'Reativar' }} {{ row.name }}">{{ 'Desativar' if row.active else 'Reativar' }}</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<div class="empty">
+    <span class="empty-icon">▤</span>
+    <h2>Nenhum cadastro encontrado</h2>
+    <p>Cadastre um item ou ajuste os filtros da busca.</p>
+    <a class="button secondary"
+       href="{{ url_for('catalog.edit', kind=kind) }}">Criar primeiro cadastro</a>
+</div>
+{% endif %}
+</section>
+<p class="page-note">Desativar mantém o cadastro e seu histórico. Você pode reativá-lo depois.</p>{% endblock %}

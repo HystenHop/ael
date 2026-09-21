@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}AEL · Almoxarifado{% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+    </head>
+    <body>
+        <a class="skip" href="#content">Pular para o conteúdo</a>
+        {% if g.user %}
+            <aside class="sidebar">
+                <a class="brand" href="{{ url_for('catalog.dashboard') }}">
+                    <span class="brand-mark">a</span>
+                    <span>AEL<small>Almoxarifado, Estoque e Logística</small>
+                    </span>
+                </a>
+                <div class="workspace">
+                    <span class="avatar">MA</span>
+                    <div>
+                        Maré Apoio<small>Empresa fictícia · base em terra</small>
+                    </div>
+                </div>
+                <p class="nav-label">ESPAÇO DE TRABALHO</p>
+                <nav aria-label="Menu principal">
+                    <a class="{{ 'selected' if request.endpoint == 'catalog.dashboard' }}"
+                       href="{{ url_for('catalog.dashboard') }}">
+                        <span aria-hidden="true">▦</span> Visão geral</a>
+                    <a class="{{ 'selected' if kind == 'materials' }}"
+                       href="{{ url_for('catalog.listing', kind='materials') }}">
+                        <span aria-hidden="true">▤</span> Materiais</a>
+                    <a class="{{ 'selected' if kind == 'locations' }}"
+                       href="{{ url_for('catalog.listing', kind='locations') }}">
+                        <span aria-hidden="true">⊙</span> Locais de armazenagem</a>
+                </nav>
+                <div class="stage-note">
+                    <span class="pill">Etapa 01</span>
+                    <strong>Uma base bem organizada.</strong>
+                    <p>Comece pelo catálogo e pelos endereços do almoxarifado.</p>
+                </div>
+                <div class="sidebar-bottom">
+                    <span class="status-dot"></span> Ambiente local <span>v0.1</span>
+                </div>
+            </aside>
+            <div class="shell">
+                <header class="topbar">
+                    <span>Operação <span class="muted">/</span> <b>{{ title or 'Visão geral' }}</b>
+                    </span>
+                    <div class="account">
+                        <span class="user-icon">{{ g.user.username[0]|upper }}</span>
+                        <span>{{ g.user.username }}<small>Administrador</small>
+                        </span>
+                        <form action="{{ url_for('auth.logout') }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="text-button" type="submit">Sair</button>
+                        </form>
+                    </div>
+                </header>
+        {% endif %}
+        <main id="content"
+              class="{{ 'main-content' if g.user else 'guest-content' }}">
+            {% for category, message in get_flashed_messages(with_categories=true) %}<div class="alert success" role="status">{{ message }}</div>{% endfor %}
+            {% block content %}{% endblock %}
+            </main>{% if g.user %}<footer>Maré Apoio · Dados fictícios <span>AEL / Fundação do catálogo</span>
+            </footer>
+        </div>
+    {% endif %}
+</body>
+</html>

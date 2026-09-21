@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="heading">
+        <div>
+            <span class="eyebrow">SEU ALMOXARIFADO, MAIS CLARO</span>
+            <h1>Visão geral</h1>
+            <p>O primeiro passo de uma operação organizada.</p>
+        </div>
+        <a class="button primary"
+           href="{{ url_for('catalog.edit', kind='materials') }}">+ Novo material</a>
+    </div>
+    <section class="hero">
+        <div>
+            <span class="eyebrow">CATÁLOGO & ARMAZENAGEM</span>
+            <h2>
+                Tudo começa
+                <br>
+                com uma boa base.
+            </h2>
+            <p>
+                Cadastre os materiais da operação e identifique
+                <br class="desktop-break">
+                cada local do seu almoxarifado.
+            </p>
+            <a class="button white"
+               href="{{ url_for('catalog.listing', kind='materials') }}">Explorar catálogo <span aria-hidden="true">↗</span>
+            </a>
+        </div>
+        <div class="warehouse-art" aria-hidden="true">
+            <div class="shelf top">
+                <i>
+                </i>
+                <i>
+                </i>
+                <i>
+                </i>
+            </div>
+            <div class="shelf bottom">
+                <i>
+                </i>
+                <i>
+                </i>
+            </div>
+            <span class="art-label">BASE / 01</span>
+        </div>
+    </section>
+    <div class="stats">
+        <a class="stat"
+           href="{{ url_for('catalog.listing', kind='materials') }}">
+            <span class="stat-icon">▤</span>
+            <span>Materiais ativos<strong>{{ counts.materials }}</strong>
+                <small>Itens no catálogo <span>↗</span>
+                </small>
+            </span>
+        </a>
+        <a class="stat"
+           href="{{ url_for('catalog.listing', kind='locations') }}">
+            <span class="stat-icon">⊙</span>
+            <span>Locais ativos<strong>{{ counts.locations }}</strong>
+                <small>Endereços cadastrados <span>↗</span>
+                </small>
+            </span>
+        </a>
+        <section class="stat next">
+            <span class="stat-icon">⇄</span>
+            <span>Movimentações<strong class="up-next">Próxima etapa</strong>
+                <small>Entradas, saídas e saldos</small>
+            </span>
+        </section>
+    </div>
+    <div class="dashboard-grid">
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Organize sua base</h2>
+                <span class="pill pale">Comece aqui</span>
+            </div>
+            <a class="action-row"
+               href="{{ url_for('catalog.edit', kind='materials') }}">
+                <span class="step">01</span>
+                <div>
+                    <strong>Cadastre seus materiais</strong>
+                    <p>Defina SKU, nome, categoria e unidade de medida.</p>
+                </div>
+                <span>→</span>
+            </a>
+            <a class="action-row"
+               href="{{ url_for('catalog.edit', kind='locations') }}">
+                <span class="step">02</span>
+                <div>
+                    <strong>Identifique os locais</strong>
+                    <p>Organize bases, prateleiras e endereços físicos.</p>
+                </div>
+                <span>→</span>
+            </a>
+            <div class="inline-note">Os cadastros desta etapa ainda não representam quantidades em estoque.</div>
+        </section>
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Atividade recente</h2>
+                <span class="muted tiny">Últimos 5 registros</span>
+            </div>
+            {% for event in recent %}
+                <div class="activity">
+                    <span class="activity-dot"></span>
+                    <div>
+                        <strong>{{ {'create':'Cadastro criado','update':'Cadastro editado','deactivate':'Cadastro desativado','reactivate':'Cadastro reativado'}[event.action] }}</strong>
+                        <p>{{ 'Material' if event.entity == 'materials' else 'Local' }} #{{ event.entity_id }} · {{ event.username }}</p>
+                        <small>{{ event.created_at }} UTC</small>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty compact">
+                    <strong>Sua história começa aqui.</strong>
+                    <p>Os primeiros cadastros aparecerão neste espaço.</p>
+                </div>
+            {% endfor %}
+        </section>
+    </div>
+{% endblock %}
