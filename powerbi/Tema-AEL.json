@@ -1,0 +1,12 @@
+{
+  "name": "AEL",
+  "dataColors": [
+    "#B91C2C",
+    "#D49735",
+    "#722F37",
+    "#7B8794"
+  ],
+  "background": "#FFF8EE",
+  "foreground": "#302626",
+  "tableAccent": "#B91C2C"
+}

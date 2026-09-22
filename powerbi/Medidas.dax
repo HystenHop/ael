@@ -1,0 +1,10 @@
+// Crie cada medida separadamente na tabela indicada.
+// Materiais
+Total de materiais = COALESCE(COUNTROWS(Materiais), 0)
+Materiais ativos = COALESCE(CALCULATE(COUNTROWS(Materiais), Materiais[active] = 1), 0)
+Percentual ativo = DIVIDE([Materiais ativos], [Total de materiais], 0)
+// Locais
+Locais ativos = COALESCE(CALCULATE(COUNTROWS(Locais), Locais[active] = 1), 0)
+// Eventos
+Total de eventos = COALESCE(COUNTROWS(Eventos), 0)
+Cadastros criados = COALESCE(CALCULATE(COUNTROWS(Eventos), Eventos[action] = "create"), 0)
